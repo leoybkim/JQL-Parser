@@ -1,0 +1,345 @@
+grammar jql;
+
+parse
+ : ( jql_stmt_list )* EOF
+ ;
+
+jql_stmt_list 
+ : SCOL* jql_stmt ( SCOL+ jql_stmt )* SCOL*
+ ;
+ 
+jql_stmt
+ : OPEN_PAR* expr ( ( K_AND | K_OR) expr )* CLOSE_PAR* ordering_term?
+ ; 
+
+expr
+ : OPEN_PAR* field operator ( literal_value | function_name'(' literal_value* ')' | state_name | literal_list ) CLOSE_PAR*
+ ;
+
+ordering_term
+ : K_ORDER K_BY field ( K_ASC | K_DESC )?
+ ;
+
+operator
+ : EQ
+ | NOT_EQ
+ | CONTAINS
+ | NOT_CONTAINS
+ | LT_EQ 
+ | LT 
+ | GT 
+ | GT_EQ 
+ | K_IN 
+ | K_NOT K_IN
+ | K_IS
+ | K_WAS
+ | K_IS K_NOT
+ | K_WAS K_NOT
+ ;
+
+literal_value
+ : NUMERIC_LITERAL
+ | STRING_LITERAL
+ | IDENTIFIER
+ | K_NULL
+ ;
+
+literal_list
+ : '(' literal_value ( COMMA literal_value )* ')'
+ ;
+
+keyword
+ : K_ASC
+ | K_AND
+ | K_BY
+ | K_CHANGED
+ | K_DESC
+ | K_IN
+ | K_IS
+ | K_NOT
+ | K_NULL
+ | K_OR
+ | K_ORDER
+ | K_TO
+ | K_WAS
+ ;
+
+state_name
+ : K_EMPTY
+ ;
+ 
+field
+ : F_AFFECTED_VERSION
+ | F_APPROVALS
+ | F_ASSIGNEE
+ | F_ATTACHMENTS
+ | F_CATEGORY
+ | F_COMMENT
+ | F_COMPONENT
+ | F_CREATED
+ | F_CREATOR
+ | F_CUSTOM_FIELD
+ | F_CUSTOMER_REQUEST_TYPE
+ | F_DESCRIPTION
+ | F_DUE
+ | F_ENVIRONMENT
+ | F_EPIC_LINK
+ | F_FILTER
+ | F_FIX_VERSION
+ | F_ISSUE_KEY
+ | F_LABELS
+ | F_LAST_VIEWED
+ | F_LEVEL
+ | F_ORGANIZATION
+ | F_ORIGINAL_ESTIMATE
+ | F_PARENT
+ | F_PRIORITY
+ | F_PROJECT
+ | F_RANK
+ | F_REMAINING_ESTIMATE
+ | F_REPORTER
+ | F_REQUEST_CHANNEL_TYPE
+ | F_REQUEST_LAST_ACTIVITY_TIME
+ | F_RESOLUTION
+ | F_RESOLVED
+ | F_SPRINT
+ | F_STATUS
+ | F_SUMMARY
+ | F_TEXT
+ | F_TIME_SPENT
+ | F_TYPE
+ | F_UPDATED
+ | F_VOTER
+ | F_VOTES
+ | F_WATCHER
+ | F_WATCHERS
+ | F_WORK_RATIO
+ ;
+
+
+function_name
+ : FUNC_APPROVED
+ | FUNC_APPROVER
+ | FUNC_CASCADE_OPTION
+ | FUNC_CLOSED_SPRINTS
+ | FUNC_COMPONENTS_LEAD_BY_USER
+ | FUNC_CURRENT_LOGIN
+ | FUNC_CURRENT_USER
+ | FUNC_EARLIEST_UNRELEASED_VERSION
+ | FUNC_END_OF_DAY
+ | FUNC_END_OF_MONTH
+ | FUNC_END_OF_WEEK
+ | FUNC_END_OF_YEAR
+ | FUNC_FUTURE_SPRINTS
+ | FUNC_ISSUE_HISTORY
+ | FUNC_ISSUES_WITH_REMOTE_LINKS_BY_GLOBAL_ID
+ | FUNC_LAST_LOGIN
+ | FUNC_LATEST_RELEASED_VERSION
+ | FUNC_LINKED_ISSUES
+ | FUNC_MEMBERS_OF
+ | FUNC_MY_APPROVAL
+ | FUNC_MY_PENDING
+ | FUNC_NOW
+ | FUNC_OPEN_SPRINTS
+ | FUNC_PARENT_EPIC
+ | FUNC_PENDING
+ | FUNC_PENDING_BY
+ | FUNC_PROJECTS_LEAD_BY_USER
+ | FUNC_PROJECTS_WHERE_USER_HAS_PERMISSIONS
+ | FUNC_PROJECTS_WHERE_USER_HAS_ROLE
+ | FUNC_RELEASED_VERSIONS
+ | FUNC_STANDARD_ISSUE_TYPES
+ | FUNC_START_OF_DAY
+ | FUNC_START_OF_MONTH
+ | FUNC_START_OF_WEEK
+ | FUNC_START_OF_YEAR
+ | FUNC_SUBTASK_ISSUE_TYPES
+ | FUNC_UNRELEASED_VERSIONS
+ | FUNC_VOTED_ISSUES
+ | FUNC_WATCHED_ISSUES
+ ;
+
+
+/*
+any_name
+ : IDENTIFIER 
+ | keyword
+ | STRING_LITERAL
+ | OPEN_PAR any_name CLOSE_PAR
+ ;
+*/
+
+NUMBER : [0-9]+ ;
+
+WHITESPACE : ' ' -> skip ;
+
+SCOL : ';';
+DOT : '.';
+OPEN_PAR : '(';
+CLOSE_PAR : ')';
+COMMA : ',';
+EQ : '=';
+STAR : '*';
+CONTAINS : '~';
+NOT_CONTAINS : '!~';
+LT : '<';
+LT_EQ : '<=';
+GT : '>';
+GT_EQ : '>=';
+NOT_EQ : '!=';
+
+K_ASC : A S C;
+K_AND : A N D;
+K_BY : B Y;
+K_CHANGED : C H A N G E D;
+K_DESC : D E S C;
+K_EMPTY : E M P T Y;
+K_IN : I N;
+K_IS : I S;
+K_NOT : N O T;
+K_NULL : N U L L;
+K_OR : O R;
+K_ORDER : O R D E R;
+K_TO : T O;
+K_WAS : W A S;
+
+F_AFFECTED_VERSION : A F F E C T E D V E R S I O N;
+F_APPROVALS : A P P R O V A L S;
+F_ASSIGNEE : A S S I G N E E;
+F_ATTACHMENTS : A T T A C H M E N T S;
+F_CATEGORY : C A T E G O R Y;
+F_COMMENT : C O M M E N T;
+F_COMPONENT : C O M P O N E N T;
+F_CREATED : C R E A T E D;
+F_CREATOR : C R E A T O R;
+F_CUSTOM_FIELD : C U S T O M F I E L D;
+F_CUSTOMER_REQUEST_TYPE : C U S T O M E R R E Q U E S T T Y P E;
+F_DESCRIPTION : D E S C R I P T I O N;
+F_DUE : D U E;
+F_ENVIRONMENT : E N V I R O N M E N T;
+F_EPIC_LINK : E P I C L I N K;
+F_FILTER : F I L T E R;
+F_FIX_VERSION : F I X V E R S I O N;
+F_ISSUE_KEY : I S S U E K E Y;
+F_LABELS : L A B E L S;
+F_LAST_VIEWED : L A S T V I E W E D;
+F_LEVEL : L E V E L;
+F_ORGANIZATION : O R G A N I Z A T I O N;
+F_ORIGINAL_ESTIMATE : O R I G I N A L E S T I M A T E;
+F_PARENT : P A R E N T;
+F_PRIORITY : P R I O R I T Y;
+F_PROJECT : P R O J E C T;
+F_RANK : R A N K;
+F_REMAINING_ESTIMATE : R E M A I N I N G E S T I M A T E;
+F_REPORTER : R E P O R T E R;
+F_REQUEST_CHANNEL_TYPE : R E Q U E S T C H A N  N E L T Y P E;
+F_REQUEST_LAST_ACTIVITY_TIME : R E Q U E S T L A S T A C T I V I T Y T I M E;
+F_RESOLUTION : R E S O L U T I O N;
+F_RESOLVED : R E S O L V E D;
+F_SPRINT : S P R I N T;
+F_STATUS : S T A T U S;
+F_SUMMARY : S U M M A R Y;
+F_TEXT : T E X T;
+F_TIME_SPENT : T I M E S P E N T;
+F_TYPE : T Y P E;
+F_UPDATED : U P D A T E D;
+F_VOTER : V O T E R;
+F_VOTES : V O T E S;
+F_WATCHER : W A T C H E R;
+F_WATCHERS : W A T C H E R S;
+F_WORK_RATIO : W  O R K R A T I O;
+
+FUNC_APPROVED : A P P R O V E D;
+FUNC_APPROVER : A P P R O V E R;
+FUNC_CASCADE_OPTION : C A S C A D E O P T I O N;
+FUNC_CLOSED_SPRINTS : C L O S E D S P R I N T S;
+FUNC_COMPONENTS_LEAD_BY_USER : C O M P O N E N T S L E A D B Y U S E R;
+FUNC_CURRENT_LOGIN : C U R R E N T L O G I N;
+FUNC_CURRENT_USER : C U R R E N T U S E R;
+FUNC_EARLIEST_UNRELEASED_VERSION : E A R L I E S T U N R E L E A S E D V E R S I O N;
+FUNC_END_OF_DAY : E N D O F D A Y;
+FUNC_END_OF_MONTH : E N D O F M O N T H;
+FUNC_END_OF_WEEK : E N D O F W E E K;
+FUNC_END_OF_YEAR : E N D O F Y E A R;
+FUNC_FUTURE_SPRINTS : F U T U R E S P R I N T S;
+FUNC_ISSUE_HISTORY : I S S U E H I S T O R Y;
+FUNC_ISSUES_WITH_REMOTE_LINKS_BY_GLOBAL_ID : I S S U E S W I T H R E M O T E L I N K S B Y G L O B A L I D;
+FUNC_LAST_LOGIN : L A S T L O G I N;
+FUNC_LATEST_RELEASED_VERSION : L A T E S T R E L E A S E D V E R S I O N;
+FUNC_LINKED_ISSUES : L I N K E D I S S U E S;
+FUNC_MEMBERS_OF : M E M B E R S O F;
+FUNC_MY_APPROVAL : M Y A P P R O V A L;
+FUNC_MY_PENDING : M Y P E N D I N G;
+FUNC_NOW : N O W;
+FUNC_OPEN_SPRINTS : O P E N S P R I N T S;
+FUNC_PARENT_EPIC : P A R E N T E P I C;
+FUNC_PENDING : P E N D I N G;
+FUNC_PENDING_BY : P E N D I N G B Y;
+FUNC_PROJECTS_LEAD_BY_USER : P R O J E C T S L E A D B Y U S E R;
+FUNC_PROJECTS_WHERE_USER_HAS_PERMISSIONS : P R O J E C T S W H E R E U S E R H A S P E R M I S S I O N S;
+FUNC_PROJECTS_WHERE_USER_HAS_ROLE : P R O J E C T S W H E R E U S E R H A S R O L E;
+FUNC_RELEASED_VERSIONS : R E L E A S E D V E R S I O N S;
+FUNC_STANDARD_ISSUE_TYPES : S T A N D A R D I S S U E T Y P E S;
+FUNC_START_OF_DAY : S T A R T O F D A Y;
+FUNC_START_OF_MONTH : S T A R T O F M O N T H;
+FUNC_START_OF_WEEK : S T A R T O F W E E K;
+FUNC_START_OF_YEAR : S T A R T O F Y E A R;
+FUNC_SUBTASK_ISSUE_TYPES : S U B T A S K I S S U E T Y P E S;
+FUNC_UNRELEASED_VERSIONS : U N R E L E A S E D V E R S I O N S;
+FUNC_VOTED_ISSUES : V O T E D I S S U E S;
+FUNC_WATCHED_ISSUES : W A T C H E D I S S U E S;
+
+IDENTIFIER
+ : '"' (~'"' | '""')* '"'
+ | '`' (~'`' | '``')* '`'
+ | '[' ~']'* ']'
+ | [a-zA-Z_] [a-zA-Z_0-9]* // TODO check: needs more chars in set
+ | '-'
+ ;
+ 
+NUMERIC_LITERAL
+ : DIGIT+ ( '.' DIGIT* )? ( E [-+]? DIGIT+ )?
+ | '.' DIGIT+ ( E [-+]? DIGIT+ )?
+ ;
+
+STRING_LITERAL
+ : '\'' ('\\'. | '\'\'' | ~('\'' | '\\'))* '\''
+ | '"' ( '\\'. | '""' | ~('"'| '\\') )* '"'
+ ;
+
+SPACES
+ : [ \u000B\t\r\n] -> channel(HIDDEN)
+ ;
+ 
+UNEXPECTED_CHAR
+ : .
+ ;
+
+fragment DIGIT : [0-9];
+
+fragment A : [aA];
+fragment B : [bB];
+fragment C : [cC];
+fragment D : [dD];
+fragment E : [eE];
+fragment F : [fF];
+fragment G : [gG];
+fragment H : [hH];
+fragment I : [iI];
+fragment J : [jJ];
+fragment K : [kK];
+fragment L : [lL];
+fragment M : [mM];
+fragment N : [nN];
+fragment O : [oO];
+fragment P : [pP];
+fragment Q : [qQ];
+fragment R : [rR];
+fragment S : [sS];
+fragment T : [tT];
+fragment U : [uU];
+fragment V : [vV];
+fragment W : [wW];
+fragment X : [xX];
+fragment Y : [yY];
+fragment Z : [zZ];
