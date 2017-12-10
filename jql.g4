@@ -17,7 +17,7 @@ expr
  ;
 
 ordering_term
- : K_ORDER K_BY field ( K_ASC | K_DESC )?
+ : K_ORDER K_BY field ( K_ASC | K_DESC )? (COMMA field ( K_ASC | K_DESC )? )?
  ;
 
 operator
@@ -102,6 +102,7 @@ field
  | F_REQUEST_LAST_ACTIVITY_TIME
  | F_RESOLUTION
  | F_RESOLVED
+ | F_SLA
  | F_SPRINT
  | F_STATUS
  | F_SUMMARY
@@ -236,6 +237,7 @@ F_REQUEST_CHANNEL_TYPE : R E Q U E S T C H A N  N E L T Y P E;
 F_REQUEST_LAST_ACTIVITY_TIME : R E Q U E S T L A S T A C T I V I T Y T I M E;
 F_RESOLUTION : R E S O L U T I O N;
 F_RESOLVED : R E S O L V E D;
+F_SLA : S L A;
 F_SPRINT : S P R I N T;
 F_STATUS : S T A T U S;
 F_SUMMARY : S U M M A R Y;
