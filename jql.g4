@@ -9,11 +9,11 @@ jql_stmt_list
  ;
  
 jql_stmt
- : OPEN_PAR* expr ( ( K_AND | K_OR) expr )* CLOSE_PAR* ordering_term?
+ : OPEN_PAR* expr ( ( K_AND | K_OR) OPEN_PAR* expr CLOSE_PAR* )* CLOSE_PAR* ordering_term?
  ; 
 
 expr
- : OPEN_PAR* ( field | literal_value ) operator ( literal_value | literal_list | FUNCTION | DATETIME ) (( K_ON | K_AFTER | K_BEFORE )? DATETIME)? CLOSE_PAR*
+ : K_NOT* ( field | literal_value ) operator OPEN_PAR* ( literal_value | literal_list | FUNCTION | dates ) (compare_dates)? CLOSE_PAR* 
  ;
 
 ordering_term
@@ -43,11 +43,11 @@ literal_value
  | IDENTIFIER
  | state_name
  | field
- | DATETIME
+ | dates
  ;
  
 FUNCTION
- : [a-zA-Z]+ '(' .* ')'
+ : [a-zA-Z]+ '(' (.*? | FUNCTION) ')' 
  ;
 
 literal_list
@@ -136,6 +136,9 @@ field
  | F_WATCHERS
  | F_WORK_RATIO
  ;
+
+compare_dates : ( K_ON | K_AFTER | K_BEFORE )? dates ; 
+dates : DATETIME ;
 
 DATETIME 
  : ('-'|'+')? (NUMBER ('d'|'w'|'y'|'h'|'m')?)+ 
