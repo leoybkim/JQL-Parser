@@ -103,12 +103,21 @@ class jqlListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by jqlParser#function_name.
-    def enterFunction_name(self, ctx):
+    # Enter a parse tree produced by jqlParser#compare_dates.
+    def enterCompare_dates(self, ctx):
         pass
 
-    # Exit a parse tree produced by jqlParser#function_name.
-    def exitFunction_name(self, ctx):
+    # Exit a parse tree produced by jqlParser#compare_dates.
+    def exitCompare_dates(self, ctx):
+        pass
+
+
+    # Enter a parse tree produced by jqlParser#dates.
+    def enterDates(self, ctx):
+        pass
+
+    # Exit a parse tree produced by jqlParser#dates.
+    def exitDates(self, ctx):
         pass
 
 
